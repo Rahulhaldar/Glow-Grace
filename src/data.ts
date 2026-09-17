@@ -1004,7 +1004,7 @@ export class MockDB {
     const data = localStorage.getItem(`gg_${key}`);
     if (!data || data === 'undefined' || data === 'null') {
       // Check if it is the settings object to return defaults
-      if (key === 'settings') return {} as unknown as T;
+      if (key === 'settings') return DEFAULT_SETTINGS as unknown as T;
       return [] as unknown as T;
     }
     try {
@@ -1015,7 +1015,7 @@ export class MockDB {
       return parsed;
     } catch (err) {
       console.warn(`[MockDB] Error parsing data for key ${key}:`, err);
-      if (key === 'settings') return {} as unknown as T;
+      if (key === 'settings') return DEFAULT_SETTINGS as unknown as T;
       return [] as unknown as T;
     }
   }

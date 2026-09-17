@@ -135,7 +135,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ settings }) => {
               </a>
 
               <a
-                href={`https://wa.me/${settings.whatsappNumber.replace(/[^0-9+]/g, '')}?text=Hi%20Glow%20and%20Grace`}
+                href={`https://wa.me/${(settings?.whatsappNumber || '').replace(/[^0-9+]/g, '')}?text=Hi%20Glow%20and%20Grace`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 inline-flex items-center justify-center gap-2 bg-[#25D366] text-white hover:bg-[#20ba59] transition-colors py-3.5 px-6 rounded-full font-semibold text-xs tracking-wider uppercase text-center"

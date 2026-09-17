@@ -46,7 +46,7 @@ export const WhatsAppButton: React.FC<{ number: string; message?: string }> = ({
   number, 
   message = "Hi Glow & Grace, I would like to book an appointment." 
 }) => {
-  const cleanNum = number.replace(/[^0-9+]/g, '');
+  const cleanNum = (number || '').replace(/[^0-9+]/g, '');
   const encodedMsg = encodeURIComponent(message);
   const whatsappUrl = `https://wa.me/${cleanNum}?text=${encodedMsg}`;
 
