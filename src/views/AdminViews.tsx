@@ -73,6 +73,7 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
 
   // Active view inside dashboard
   const [activeTab, setActiveTab] = useState<string>('dashboard');
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   // Sync state variables
   const [isSyncingWebsite, setIsSyncingWebsite] = useState(false);
@@ -409,37 +410,57 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
 
   // Soft Delete to Trash
   const handleMoveToTrash = async (entityType: TrashEntityType, id: string, title?: string, subtitle?: string) => {
-    const item = await MockDB.moveToTrash(entityType, id, title, subtitle);
-    if (item) {
-      refreshAllData();
-      setSelectedIds(prev => prev.filter(i => i !== id));
-      triggerToast(`Moved "${item.title}" to Trash.`, {
-        label: 'Undo',
-        onClick: async () => {
-          await MockDB.restoreFromTrash(item.trashId);
-          refreshAllData();
-          triggerToast(`Restored "${item.title}" from Trash.`);
-        }
-      });
+    setIsProcessing(true);
+    try {
+      const item = await MockDB.moveToTrash(entityType, id, title, subtitle);
+      if (item) {
+        refreshAllData();
+        setSelectedIds(prev => prev.filter(i => i !== id));
+        triggerToast(`Moved "${item.title}" to Trash.`, {
+          label: 'Undo',
+          onClick: async () => {
+            setIsProcessing(true);
+            try {
+              await MockDB.restoreFromTrash(item.trashId);
+              refreshAllData();
+              triggerToast(`Restored "${item.title}" from Trash.`);
+            } finally {
+              setIsProcessing(false);
+            }
+          }
+        });
+      }
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   // Bulk Soft Delete to Trash
   const handleBulkMoveToTrash = async (entityType: TrashEntityType) => {
     if (selectedIds.length === 0) return;
-    const count = selectedIds.length;
-    const moved = await MockDB.bulkMoveToTrash(entityType, selectedIds);
-    const movedIds = moved.map(m => m.trashId);
-    clearSelection();
-    refreshAllData();
-    triggerToast(`Moved ${count} item${count > 1 ? 's' : ''} to Trash.`, {
-      label: 'Undo',
-      onClick: async () => {
-        await MockDB.bulkRestoreFromTrash(movedIds);
-        refreshAllData();
-        triggerToast(`Restored ${count} item${count > 1 ? 's' : ''} from Trash.`);
-      }
-    });
+    setIsProcessing(true);
+    try {
+      const count = selectedIds.length;
+      const moved = await MockDB.bulkMoveToTrash(entityType, selectedIds);
+      const movedIds = moved.map(m => m.trashId);
+      clearSelection();
+      refreshAllData();
+      triggerToast(`Moved ${count} item${count > 1 ? 's' : ''} to Trash.`, {
+        label: 'Undo',
+        onClick: async () => {
+          setIsProcessing(true);
+          try {
+            await MockDB.bulkRestoreFromTrash(movedIds);
+            refreshAllData();
+            triggerToast(`Restored ${count} item${count > 1 ? 's' : ''} from Trash.`);
+          } finally {
+            setIsProcessing(false);
+          }
+        }
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   // Permanent Deletion with In-App Confirmation Modal
@@ -451,10 +472,15 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
       confirmLabel: 'Delete Permanently',
       confirmVariant: 'danger',
       onConfirm: async () => {
-        await MockDB.deleteEntityPermanently(entityType, id);
-        clearSelection();
-        refreshAllData();
-        triggerToast('Resource permanently deleted.');
+        setIsProcessing(true);
+        try {
+          await MockDB.deleteEntityPermanently(entityType, id);
+          clearSelection();
+          refreshAllData();
+          triggerToast('Resource permanently deleted.');
+        } finally {
+          setIsProcessing(false);
+        }
       }
     });
   };
@@ -470,10 +496,15 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
       confirmLabel: `Delete ${count} Item${count > 1 ? 's' : ''}`,
       confirmVariant: 'danger',
       onConfirm: async () => {
-        await MockDB.bulkDeleteEntitiesPermanently(entityType, selectedIds);
-        clearSelection();
-        refreshAllData();
-        triggerToast(`${count} items permanently deleted.`);
+        setIsProcessing(true);
+        try {
+          await MockDB.bulkDeleteEntitiesPermanently(entityType, selectedIds);
+          clearSelection();
+          refreshAllData();
+          triggerToast(`${count} items permanently deleted.`);
+        } finally {
+          setIsProcessing(false);
+        }
       }
     });
   };
@@ -501,9 +532,14 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
       confirmLabel: 'Purge Permanently',
       confirmVariant: 'danger',
       onConfirm: async () => {
-        await MockDB.deletePermanentlyFromTrash(trashId);
-        refreshAllData();
-        triggerToast('Item permanently removed from Trash.');
+        setIsProcessing(true);
+        try {
+          await MockDB.deletePermanentlyFromTrash(trashId);
+          refreshAllData();
+          triggerToast('Item permanently removed from Trash.');
+        } finally {
+          setIsProcessing(false);
+        }
       }
     });
   };
@@ -518,10 +554,15 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
       confirmLabel: `Purge ${count} Items`,
       confirmVariant: 'danger',
       onConfirm: async () => {
-        await MockDB.bulkDeletePermanentlyFromTrash(selectedIds);
-        clearSelection();
-        refreshAllData();
-        triggerToast(`Permanently purged ${count} items from Trash.`);
+        setIsProcessing(true);
+        try {
+          await MockDB.bulkDeletePermanentlyFromTrash(selectedIds);
+          clearSelection();
+          refreshAllData();
+          triggerToast(`Permanently purged ${count} items from Trash.`);
+        } finally {
+          setIsProcessing(false);
+        }
       }
     });
   };
@@ -535,10 +576,15 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
       confirmLabel: 'Empty Entire Trash',
       confirmVariant: 'danger',
       onConfirm: async () => {
-        await MockDB.emptyTrash();
-        clearSelection();
-        refreshAllData();
-        triggerToast('Trash has been completely emptied.');
+        setIsProcessing(true);
+        try {
+          await MockDB.emptyTrash();
+          clearSelection();
+          refreshAllData();
+          triggerToast('Trash has been completely emptied.');
+        } finally {
+          setIsProcessing(false);
+        }
       }
     });
   };
@@ -557,6 +603,7 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
       confirmLabel: 'Clean Database Now',
       confirmVariant: 'danger',
       onConfirm: async () => {
+        setIsProcessing(true);
         try {
           let anyChanges = false;
           const ranMigration = await MockDB.clearDemoData();
@@ -565,8 +612,13 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
           const keys = ['services', 'packages', 'artists', 'gallery', 'offers', 'reels', 'glowups', 'reviews', 'appointments'];
           for (const key of keys) {
             const dataStr = localStorage.getItem(`gg_${key}`);
-            if (!dataStr) continue;
-            const data = JSON.parse(dataStr);
+            if (!dataStr || dataStr === 'undefined' || dataStr === 'null') continue;
+            let data;
+            try {
+              data = JSON.parse(dataStr);
+            } catch (err) {
+              continue;
+            }
             if (Array.isArray(data)) {
               const originalLength = data.length;
               const cleaned = data.filter(item => {
@@ -589,6 +641,8 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
           }
         } catch (err: any) {
           triggerToast('Failed to clean database.');
+        } finally {
+          setIsProcessing(false);
         }
       }
     });
@@ -603,6 +657,7 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
       confirmLabel: 'Seed Heritage Data',
       confirmVariant: 'primary',
       onConfirm: async () => {
+        setIsProcessing(true);
         try {
           triggerToast('Seeding Indian Heritage theme to Firestore...');
           await forceSeedIndianHeritageTheme();
@@ -610,6 +665,8 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
           window.location.reload();
         } catch (err: any) {
           triggerToast(`Failed to seed database: ${err.message || err}`);
+        } finally {
+          setIsProcessing(false);
         }
       }
     });
@@ -862,6 +919,17 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
 
   return (
     <div className="min-h-screen bg-[#FFF9F7] text-[#24191B] flex flex-col lg:flex-row">
+      {/* Global Processing Overlay */}
+      {isProcessing && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white/80 backdrop-blur-sm">
+          <div className="flex flex-col items-center bg-white p-6 rounded-2xl shadow-xl border border-stone-200">
+            <RefreshCw className="w-8 h-8 text-[#D4A373] animate-spin mb-4" />
+            <p className="text-stone-800 font-bold text-sm">Processing...</p>
+            <p className="text-stone-500 text-xs mt-1">Please wait while changes are saved.</p>
+          </div>
+        </div>
+      )}
+      
       {toastMessage && (
         <Toast 
           message={toastMessage} 
@@ -2870,11 +2938,14 @@ exports.sendAutomatedReminders = onSchedule({
                   type="button"
                   onClick={async () => {
                     if (confirm('Re-seed the Indian Heritage theme (Royal Bridal, Haldi, Sangeet, Mehendi) to Firestore?')) {
+                      setIsProcessing(true);
                       try {
                         await forceSeedIndianHeritageTheme();
                         triggerToast('Indian Heritage Theme re-seeded successfully.');
                       } catch (err: any) {
                         triggerToast(err.message || 'Failed to re-seed theme.');
+                      } finally {
+                        setIsProcessing(false);
                       }
                     }
                   }}

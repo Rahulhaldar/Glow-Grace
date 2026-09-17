@@ -60,7 +60,15 @@ export function parseHash(hash: string): ParsedRoute {
 }
 
 export function useHashRoute() {
-  const [route, setRoute] = useState<ParsedRoute>(() => parseHash(window.location.hash));
+  const [route, setRoute] = useState<ParsedRoute>(() => {
+    // If there's no hash but there is a pathname (like from Vercel fallback), migrate to hash
+    let initialHash = window.location.hash;
+    if (!initialHash && window.location.pathname && window.location.pathname !== '/') {
+      initialHash = '#' + window.location.pathname;
+      window.history.replaceState(null, '', '/' + initialHash);
+    }
+    return parseHash(initialHash);
+  });
 
   useEffect(() => {
     const handleHashChange = () => {

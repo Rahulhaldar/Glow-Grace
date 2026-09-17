@@ -1002,13 +1002,35 @@ export class MockDB {
 
   static get<T>(key: string): T {
     const data = localStorage.getItem(`gg_${key}`);
-    return data ? JSON.parse(data) : [] as unknown as T;
+    if (!data || data === 'undefined' || data === 'null') {
+      // Check if it is the settings object to return defaults
+      if (key === 'settings') return {} as unknown as T;
+      return [] as unknown as T;
+    }
+    try {
+      const parsed = JSON.parse(data);
+      if (key !== 'settings' && !Array.isArray(parsed)) {
+        return [] as unknown as T;
+      }
+      return parsed;
+    } catch (err) {
+      console.warn(`[MockDB] Error parsing data for key ${key}:`, err);
+      if (key === 'settings') return {} as unknown as T;
+      return [] as unknown as T;
+    }
   }
 
   static async set(key: string, data: any) {
     // Get previous state from localStorage to find deletions
     const prevDataStr = localStorage.getItem(`gg_${key}`);
-    const prevData = prevDataStr ? JSON.parse(prevDataStr) : null;
+    let prevData = null;
+    if (prevDataStr && prevDataStr !== 'undefined' && prevDataStr !== 'null') {
+      try {
+        prevData = JSON.parse(prevDataStr);
+      } catch (e) {
+        console.warn(`[MockDB] Error parsing previous data for key ${key}`);
+      }
+    }
 
     // Save to local state instantly for extreme responsiveness
     localStorage.setItem(`gg_${key}`, JSON.stringify(data));
