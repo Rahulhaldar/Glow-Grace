@@ -1,0 +1,206 @@
+{
+  "entities": {
+    "Service": {
+      "title": "Service",
+      "description": "Details of a beauty/salon service offered",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "slug": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "startingPrice": { "type": "number" },
+        "originalPrice": { "type": "number" },
+        "discount": { "type": "number" },
+        "category": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "image": { "type": "string" },
+        "duration": { "type": "number" },
+        "status": { "type": "string", "enum": ["Active", "Inactive"] }
+      },
+      "required": ["id", "slug", "name", "description", "startingPrice", "category", "duration", "status"]
+    },
+    "Package": {
+      "title": "Package",
+      "description": "A package of services with a bundled price",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "price": { "type": "number" },
+        "description": { "type": "string" },
+        "features": { "type": "array" },
+        "isPopular": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["Active", "Inactive"] }
+      },
+      "required": ["id", "name", "price", "description", "features", "isPopular", "status"]
+    },
+    "Artist": {
+      "title": "Artist",
+      "description": "A beauty expert / artist of the salon",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "slug": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "experience": { "type": "string" },
+        "specialty": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "bio": { "type": "string" },
+        "status": { "type": "string", "enum": ["Active", "Inactive"] },
+        "rating": { "type": "number" }
+      },
+      "required": ["id", "slug", "name", "role", "experience", "specialty", "photoUrl", "bio", "status", "rating"]
+    },
+    "GalleryItem": {
+      "title": "GalleryItem",
+      "description": "A portfolio work item showcased in the gallery",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "thumbnailUrl": { "type": "string" },
+        "alt": { "type": "string" },
+        "category": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "isFeatured": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "imageUrl", "thumbnailUrl", "alt", "category", "title", "description", "isFeatured", "createdAt"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Customer feedback and ratings",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerName": { "type": "string" },
+        "profileImageUrl": { "type": "string" },
+        "serviceName": { "type": "string" },
+        "rating": { "type": "number" },
+        "reviewContent": { "type": "string" },
+        "status": { "type": "string", "enum": ["Pending", "Approved"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "customerName", "profileImageUrl", "serviceName", "rating", "reviewContent", "status", "createdAt"]
+    },
+    "Offer": {
+      "title": "Offer",
+      "description": "A promotional discount code or special coupon",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "code": { "type": "string" },
+        "discountValue": { "type": "number" },
+        "type": { "type": "string" },
+        "status": { "type": "string", "enum": ["Active", "Inactive"] }
+      },
+      "required": ["id", "title", "description", "type", "status"]
+    },
+    "Appointment": {
+      "title": "Appointment",
+      "description": "A booking request submitted by a customer",
+      "type": "object",
+      "properties": {
+        "bookingId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "serviceId": { "type": "string" },
+        "serviceName": { "type": "string" },
+        "artistId": { "type": "string" },
+        "artistName": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "specialRequest": { "type": "string" },
+        "status": { "type": "string", "enum": ["Pending", "Confirmed", "Completed", "Cancelled"] },
+        "adminNotes": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["bookingId", "customerName", "phone", "email", "serviceId", "serviceName", "artistId", "date", "time", "status", "createdAt"]
+    },
+    "WebsiteSettings": {
+      "title": "WebsiteSettings",
+      "description": "Global layout settings and contact info",
+      "type": "object",
+      "properties": {
+        "whatsappNumber": { "type": "string" },
+        "salonAddress": { "type": "string" },
+        "emailAddress": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "openingHours": { "type": "string" },
+        "instagramUrl": { "type": "string" },
+        "mapsUrl": { "type": "string" },
+        "iframeMapsUrl": { "type": "string" }
+      },
+      "required": ["whatsappNumber", "salonAddress", "emailAddress", "phoneNumber", "openingHours", "instagramUrl", "mapsUrl", "iframeMapsUrl"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "Operational alert for salon desks",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "isRead": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "bookingId": { "type": "string" }
+      },
+      "required": ["id", "title", "message", "isRead", "createdAt"]
+    },
+    "Reel": {
+      "title": "Reel",
+      "description": "Short beauty reel video showcasing transformations and salon moments",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "thumbnailUrl": { "type": "string" },
+        "videoUrl": { "type": "string" },
+        "description": { "type": "string" },
+        "likes": { "type": "number" },
+        "views": { "type": "number" },
+        "active": { "type": "boolean" },
+        "displayOrder": { "type": "number" }
+      },
+      "required": ["id", "title", "videoUrl"]
+    },
+    "Glowup": {
+      "title": "Glowup",
+      "description": "Before and after transformation showcase",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "beforeImage": { "type": "string" },
+        "afterImage": { "type": "string" },
+        "description": { "type": "string" },
+        "serviceName": { "type": "string" },
+        "price": { "type": "number" },
+        "active": { "type": "boolean" },
+        "displayOrder": { "type": "number" }
+      },
+      "required": ["id", "title", "beforeImage", "afterImage"]
+    }
+  },
+  "firestore": {
+    "/services/{serviceId}": { "schema": "Service", "description": "Salon services catalog" },
+    "/packages/{packageId}": { "schema": "Package", "description": "Salon pricing packages" },
+    "/artists/{artistId}": { "schema": "Artist", "description": "Salon beauty experts" },
+    "/gallery/{galleryId}": { "schema": "GalleryItem", "description": "Salon gallery portfolio" },
+    "/reviews/{reviewId}": { "schema": "Review", "description": "Salon reviews and customer ratings" },
+    "/offers/{offerId}": { "schema": "Offer", "description": "Promotional discounts and coupon codes" },
+    "/settings/global": { "schema": "WebsiteSettings", "description": "Global operational and address settings" },
+    "/appointments/{appointmentId}": { "schema": "Appointment", "description": "Appointment bookings" },
+    "/notifications/{notificationId}": { "schema": "Notification", "description": "Desk alert notifications" },
+    "/reels/{reelId}": { "schema": "Reel", "description": "Salon beauty video reels" },
+    "/glowups/{glowupId}": { "schema": "Glowup", "description": "Before and after transformations" }
+  }
+}

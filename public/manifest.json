@@ -1,0 +1,22 @@
+{
+  "short_name": "GlowGrace",
+  "name": "Glow & Grace Premium Salon",
+  "description": "Professional bridal makeup, party makeup, hairstyling, skincare and beauty services at Glow & Grace.",
+  "icons": [
+    {
+      "src": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=192&h=192&fit=crop",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=512&h=512&fit=crop",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#FFF9F7",
+  "theme_color": "#B85C72",
+  "display": "standalone",
+  "orientation": "portrait"
+}

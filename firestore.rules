@@ -1,0 +1,217 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper Functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedEmail() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email.lower() == 'rahulx@admin.com' ||
+        request.auth.token.email.lower() == 'rahulhaldarx15@gmail.com' ||
+        request.auth.token.email.lower() == 'swarupanandahaldar15@gmail.com'
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Entity Validators
+    function isValidService(data) {
+      return data.id is string && data.id.size() <= 128
+          && data.slug is string && data.slug.size() <= 128
+          && data.name is string && data.name.size() <= 128
+          && data.description is string && data.description.size() <= 1000
+          && data.startingPrice is number && data.startingPrice >= 0
+          && data.category is string && data.category.size() <= 100
+          && data.duration is number && data.duration >= 0
+          && (data.status == 'Active' || data.status == 'Inactive')
+          && (!('imageUrl' in data) || (data.imageUrl is string && data.imageUrl.size() <= 1000))
+          && (!('image' in data) || (data.image is string && data.image.size() <= 1000))
+          && (!('originalPrice' in data) || (data.originalPrice is number && data.originalPrice >= 0))
+          && (!('discount' in data) || (data.discount is number && data.discount >= 0));
+    }
+
+    function isValidPackage(data) {
+      return data.id is string && data.id.size() <= 128
+          && data.name is string && data.name.size() <= 128
+          && data.price is number && data.price >= 0
+          && data.description is string && data.description.size() <= 1000
+          && data.features is list && data.features.size() <= 50
+          && data.isPopular is bool
+          && (data.status == 'Active' || data.status == 'Inactive');
+    }
+
+    function isValidArtist(data) {
+      return data.id is string && data.id.size() <= 128
+          && data.slug is string && data.slug.size() <= 128
+          && data.name is string && data.name.size() <= 128
+          && data.role is string && data.role.size() <= 128
+          && data.experience is string && data.experience.size() <= 128
+          && data.specialty is string && data.specialty.size() <= 128
+          && data.photoUrl is string && data.photoUrl.size() <= 500
+          && data.bio is string && data.bio.size() <= 2000
+          && data.rating is number && data.rating >= 0
+          && (data.status == 'Active' || data.status == 'Inactive');
+    }
+
+    function isValidGalleryItem(data) {
+      return data.id is string && data.id.size() <= 128
+          && data.imageUrl is string && data.imageUrl.size() <= 500
+          && data.thumbnailUrl is string && data.thumbnailUrl.size() <= 500
+          && data.alt is string && data.alt.size() <= 200
+          && data.category is string && data.category.size() <= 100
+          && data.title is string && data.title.size() <= 200
+          && data.description is string && data.description.size() <= 1000
+          && data.isFeatured is bool;
+    }
+
+    function isValidReview(data) {
+      return data.id is string && data.id.size() <= 128
+          && data.customerName is string && data.customerName.size() <= 200
+          && data.profileImageUrl is string && data.profileImageUrl.size() <= 500
+          && data.serviceName is string && data.serviceName.size() <= 200
+          && data.rating is number && data.rating >= 1 && data.rating <= 5
+          && data.reviewContent is string && data.reviewContent.size() <= 2000
+          && (data.status == 'Pending' || data.status == 'Approved');
+    }
+
+    function isValidOffer(data) {
+      return data.id is string && data.id.size() <= 128
+          && data.title is string && data.title.size() <= 200
+          && data.description is string && data.description.size() <= 1000
+          && (data.status == 'Active' || data.status == 'Inactive');
+    }
+
+    function isValidAppointment(data) {
+      return data.bookingId is string && data.bookingId.size() <= 128
+          && data.customerName is string && data.customerName.size() <= 200
+          && data.phone is string && data.phone.size() <= 50
+          && data.email is string && data.email.size() <= 200
+          && data.serviceId is string && data.serviceId.size() <= 128
+          && data.serviceName is string && data.serviceName.size() <= 200
+          && data.artistId is string && data.artistId.size() <= 128
+          && data.date is string && data.date.size() <= 50
+          && data.time is string && data.time.size() <= 50
+          && (data.status == 'Pending' || data.status == 'Confirmed' || data.status == 'Completed' || data.status == 'Cancelled');
+    }
+
+    function isValidWebsiteSettings(data) {
+      return data.whatsappNumber is string && data.whatsappNumber.size() <= 50
+          && data.salonAddress is string && data.salonAddress.size() <= 500
+          && data.emailAddress is string && data.emailAddress.size() <= 200
+          && data.phoneNumber is string && data.phoneNumber.size() <= 50
+          && data.openingHours is string && data.openingHours.size() <= 200
+          && data.instagramUrl is string && data.instagramUrl.size() <= 200
+          && data.mapsUrl is string && data.mapsUrl.size() <= 1000
+          && data.iframeMapsUrl is string && data.iframeMapsUrl.size() <= 2000;
+    }
+
+    function isValidNotification(data) {
+      return data.id is string && data.id.size() <= 128
+          && data.title is string && data.title.size() <= 200
+          && data.message is string && data.message.size() <= 1000
+          && data.isRead is bool;
+    }
+
+    function isValidReel(data) {
+      return data.id is string && data.id.size() <= 128
+          && data.title is string && data.title.size() <= 200
+          && (!('category' in data) || (data.category is string && data.category.size() <= 100))
+          && (!('thumbnailUrl' in data) || (data.thumbnailUrl is string && data.thumbnailUrl.size() <= 1000))
+          && (!('imageUrl' in data) || (data.imageUrl is string && data.imageUrl.size() <= 1000))
+          && (!('videoUrl' in data) || (data.videoUrl is string && data.videoUrl.size() <= 1000))
+          && (!('description' in data) || (data.description is string && data.description.size() <= 2000))
+          && (!('active' in data) || data.active is bool);
+    }
+
+    function isValidGlowup(data) {
+      return data.id is string && data.id.size() <= 128
+          && data.title is string && data.title.size() <= 200
+          && (!('category' in data) || (data.category is string && data.category.size() <= 100))
+          && (!('beforeImage' in data) || (data.beforeImage is string && data.beforeImage.size() <= 1000))
+          && (!('afterImage' in data) || (data.afterImage is string && data.afterImage.size() <= 1000))
+          && (!('description' in data) || (data.description is string && data.description.size() <= 2000))
+          && (!('price' in data) || (data.price is number && data.price >= 0))
+          && (!('active' in data) || data.active is bool);
+    }
+
+    // Collections MATCH Rules
+    match /services/{serviceId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidService(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /packages/{packageId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidPackage(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /artists/{artistId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidArtist(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /gallery/{galleryId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidGalleryItem(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isValidReview(request.resource.data) && request.resource.data.status == 'Pending';
+      allow update: if isAdmin() && isValidReview(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /offers/{offerId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidOffer(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /settings/global {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidWebsiteSettings(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /appointments/{appointmentId} {
+      allow create: if isValidAppointment(request.resource.data) && request.resource.data.status == 'Pending';
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /notifications/{notificationId} {
+      allow create: if isValidNotification(request.resource.data);
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /reels/{reelId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidReel(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /glowups/{glowupId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidGlowup(request.resource.data);
+      allow delete: if isAdmin();
+    }
+  }
+}

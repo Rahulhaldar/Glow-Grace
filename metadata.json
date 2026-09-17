@@ -1,0 +1,8 @@
+{
+  "name": "Remix Glow \u0026 Grace",
+  "description": "Professional bridal makeup, party makeup, hairstyling, skincare and beauty services at Glow \u0026 Grace.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Glow & Grace Ladies Beauty Parlour & Salon</title>
+    <meta name="description" content="Premium ladies beauty parlour and women's salon offering professional makeup, hair styling, skin polishing, threading, waxing, bridal services, and custom beauty packages in a hygienic and relaxing sanctuary." />
+    <meta property="og:title" content="Glow & Grace Ladies Beauty Parlour & Salon" />
+    <meta property="og:description" content="Premium ladies beauty parlour and women's salon offering professional makeup, hair styling, skin polishing, threading, waxing, bridal services, and custom beauty packages in a hygienic and relaxing sanctuary." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Alex+Brush&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json" />
+    <script>
+      // Automatically detect and recover from stale service worker chunk/bundle load errors
+      window.addEventListener('error', function(e) {
+        const msg = e.message || '';
+        if (msg.includes('Importing a module script') || msg.includes('loading chunk') || msg.includes('dynamically imported')) {
+          console.warn('Asset loading failure. Resetting service worker caches and reloading...');
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(regs) {
+              for (let r of regs) r.unregister();
+            });
+          }
+          if (window.caches) {
+            caches.keys().then(function(keys) {
+              for (let k of keys) caches.delete(k);
+            });
+          }
+          setTimeout(function() { window.location.reload(true); }, 200);
+        }
+      }, true);
+
+      window.addEventListener('vite:preloadError', function() {
+        console.warn('Vite preload error. Resetting service worker caches and reloading...');
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(regs) {
+            for (let r of regs) r.unregister();
+          });
+        }
+        if (window.caches) {
+          caches.keys().then(function(keys) {
+            for (let k of keys) caches.delete(k);
+          });
+        }
+        setTimeout(function() { window.location.reload(true); }, 200);
+      });
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

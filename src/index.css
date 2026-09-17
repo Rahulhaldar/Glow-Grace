@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-cursive: 'Alex Brush', cursive;
+  
+  --color-brand-blush: #FFF5F5;
+  --color-brand-rose: #B85C72;
+  --color-brand-cream: #FFFDFB;
+  --color-brand-ivory: #FFF9F7;
+  --color-brand-gold: #D4A373;
+  --color-brand-wine: #4A1E27;
+  --color-brand-dark: #24191B;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #FFFDFB; /* Warm elegant ivory cream base */
+  color: #24191B;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+.font-cursive {
+  font-family: var(--font-cursive);
+}
+
+/* Elegant visual decorations */
+.gold-glow {
+  text-shadow: 0 0 10px rgba(212, 163, 115, 0.2);
+}
+
+.rose-border-glow {
+  box-shadow: 0 4px 20px -2px rgba(184, 92, 114, 0.08);
+}
+
