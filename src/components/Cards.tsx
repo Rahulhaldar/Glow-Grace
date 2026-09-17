@@ -121,7 +121,7 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, onBook }) => {
 
         {/* Features List */}
         <ul className="space-y-3.5 mb-8">
-          {pkg.features.map((feat, i) => (
+          {(pkg.features || []).map((feat, i) => (
             <li key={i} className="flex gap-3 text-sm items-start">
               <span className={`w-5 h-5 rounded-full shrink-0 flex items-center justify-center text-xs ${
                 pkg.isPopular ? 'bg-white/10 text-[#D4A373]' : 'bg-[#FFF9F7] text-[#B85C72] border border-[#F5DDE1]'
@@ -195,7 +195,7 @@ export const ArtistCard: React.FC<ArtistCardProps> = ({ artist, onViewProfile })
         {artist.services && artist.services.length > 0 && (
           <div className="mb-5">
             <div className="flex flex-wrap gap-1.5">
-              {artist.services.slice(0, 4).map((svc, i) => (
+              {(artist.services || []).slice(0, 4).map((svc, i) => (
                 <span
                   key={i}
                   className="px-2 py-0.5 bg-[#FFF0F2] text-[#B85C72] text-[10px] font-semibold rounded-md border border-[#F5DDE1]"

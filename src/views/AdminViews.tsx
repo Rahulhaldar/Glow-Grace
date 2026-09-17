@@ -1711,7 +1711,7 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
                       <span className="text-2xl font-serif text-[#B85C72] block">₹{p.price}</span>
                       
                       <ul className="space-y-1.5 text-xs text-stone-600 pt-2 border-t border-stone-100">
-                        {p.features.map((f, i) => (
+                        {(p.features || []).map((f, i) => (
                           <li key={i} className="flex items-center gap-1.5"><span className="text-[#B85C72]">&bull;</span> {f}</li>
                         ))}
                       </ul>
@@ -2106,7 +2106,7 @@ export const AdminViews: React.FC<AdminViewsProps> = ({ path, navigate, settings
 
                     {a.services && a.services.length > 0 && (
                       <div className="flex flex-wrap gap-1 pt-1">
-                        {a.services.map((svc, i) => (
+                        {(a.services || []).map((svc, i) => (
                           <span key={i} className="px-2 py-0.5 bg-rose-50 text-[#B85C72] text-[10px] font-semibold rounded-md border border-rose-100">
                             {svc}
                           </span>

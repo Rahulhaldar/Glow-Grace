@@ -13,41 +13,6 @@ interface BeforeAfterPair {
   startingPrice: number;
 }
 
-const TRANSFORMATION_ITEMS: BeforeAfterPair[] = [
-  {
-    id: 'bridal-glow',
-    title: 'Royal Bridal Transformation',
-    category: 'Bridal HD Makeup',
-    description: 'Complete bridal prep from bare skin to a royal red bridal look with traditional matha patti, contoured radiance, and smudge-proof HD finish.',
-    beforeImg: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&auto=format&fit=crop&q=80',
-    afterImg: 'https://images.unsplash.com/photo-1615396899839-c99c121888b0?w=800&auto=format&fit=crop&q=80',
-    beforeLabel: 'Skin Prep / Before',
-    afterLabel: 'Royal Bridal Look',
-    startingPrice: 7999,
-  },
-  {
-    id: 'facial-glow',
-    title: '24K Gold Radiance Facial',
-    category: 'Skin Therapy',
-    description: 'Transform dull, sun-tanned skin into luminous glass skin with herbal steam, deep pore extraction, 24K gold dust massage, and peel-off mask.',
-    beforeImg: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=800&auto=format&fit=crop&q=80',
-    afterImg: 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=800&auto=format&fit=crop&q=80',
-    beforeLabel: 'Tired, Dull Skin',
-    afterLabel: 'Instant Golden Glow',
-    startingPrice: 699,
-  },
-  {
-    id: 'party-glam',
-    title: 'Party Glam & Hollywood Blowout',
-    category: 'Party Makeup & Hair',
-    description: 'From casual everyday look to stunning event-ready glam with soft smokey eyes, fluttery lashes, flawless contour, and voluminous waves.',
-    beforeImg: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=80',
-    afterImg: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=800&auto=format&fit=crop&q=80',
-    beforeLabel: 'Casual Everyday',
-    afterLabel: 'Party Glamour',
-    startingPrice: 1999,
-  },
-];
 
 interface BeforeAfterSliderProps {
   glowups?: any[];
@@ -62,7 +27,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
   compact = false, 
   onViewAll 
 }) => {
-  const items = glowups.length > 0 ? glowups.map(g => ({
+  const items = glowups.map(g => ({
     id: g.id,
     title: g.title,
     category: g.category,
@@ -72,7 +37,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
     beforeLabel: 'Before',
     afterLabel: 'After',
     startingPrice: g.price || 0,
-  })) : TRANSFORMATION_ITEMS;
+  }));
 
   const [activeTab, setActiveTab] = useState<string>(items[0]?.id || '');
   const [sliderPosition, setSliderPosition] = useState<number>(50); // 0 to 100%

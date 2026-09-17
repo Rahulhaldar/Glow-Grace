@@ -13,7 +13,6 @@ import { Lightbox, Modal, ReelModal } from '../components/Modal';
 import { BookingForm, BookingConfirmation } from '../components/BookingForm';
 import { ContactSection } from '../components/ContactSection';
 import { BeforeAfterSlider } from '../components/BeforeAfterSlider';
-import { BridalShowcase } from '../components/BridalShowcase';
 import { ReelGallery } from '../components/ReelGallery';
 import { FastBookingSection } from '../components/FastBookingSection';
 
@@ -55,26 +54,31 @@ export const HomeView: React.FC<CustomerViewsProps> = ({ navigate, settings }) =
   };
 
   useEffect(() => {
-    setServices(MockDB.getServices().filter(s => s.status === 'Active' || s.active !== false));
-    setPackages(MockDB.getPackages().filter(p => p.status === 'Active').slice(0, 3));
-    setReviews(MockDB.getReviews().filter(r => r.status === 'Approved').slice(0, 3));
-    setOffers(MockDB.getOffers().filter(o => o.status === 'Active'));
-    
-    const dbReels = MockDB.getReels();
-    setReels(dbReels.filter(r => r.active !== false));
-    
-    const dbGlowups = MockDB.getGlowups();
-    setGlowups(dbGlowups.filter(g => g.active !== false));
+    const load = () => {
+      setServices(MockDB.getServices().filter(s => s.status === 'Active' || s.active !== false));
+      setPackages(MockDB.getPackages().filter(p => p.status === 'Active').slice(0, 3));
+      setReviews(MockDB.getReviews().filter(r => r.status === 'Approved').slice(0, 3));
+      setOffers(MockDB.getOffers().filter(o => o.status === 'Active'));
+      
+      const dbReels = MockDB.getReels();
+      setReels(dbReels.filter(r => r.active !== false));
+      
+      const dbGlowups = MockDB.getGlowups();
+      setGlowups(dbGlowups.filter(g => g.active !== false));
 
-    const gal = MockDB.getGallery();
-    setGallery(gal);
+      const gal = MockDB.getGallery();
+      setGallery(gal);
 
-    // Initialize likes
-    const initialLikes: Record<string, { count: number; liked: boolean }> = {};
-    gal.forEach(item => {
-      initialLikes[item.id] = { count: item.likes || Math.floor(Math.random() * 200 + 150), liked: false };
-    });
-    setLikesMap(initialLikes);
+      // Initialize likes
+      const initialLikes: Record<string, { count: number; liked: boolean }> = {};
+      gal.forEach(item => {
+        initialLikes[item.id] = { count: item.likes || Math.floor(Math.random() * 200 + 150), liked: false };
+      });
+      setLikesMap(initialLikes);
+    };
+    load();
+    window.addEventListener('gg_db_update', load);
+    return () => window.removeEventListener('gg_db_update', load);
   }, []);
 
   const handleToggleLike = (e: React.MouseEvent, itemId: string) => {
@@ -1051,7 +1055,10 @@ export const ServicesView: React.FC<CustomerViewsProps> = ({ navigate }) => {
   const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
-    setServices(MockDB.getServices().filter(s => s.status === 'Active'));
+    const load = () => setServices(MockDB.getServices().filter(s => s.status === 'Active'));
+    load();
+    window.addEventListener('gg_db_update', load);
+    return () => window.removeEventListener('gg_db_update', load);
   }, []);
 
   const categories = ['All', 'Makeup', 'Hair', 'Skin & Facial', 'Grooming', 'Bridal Services'];
@@ -1140,8 +1147,13 @@ export const ServiceDetailsView: React.FC<CustomerViewsProps> = ({ params, navig
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const matched = MockDB.getServices().find(s => s.slug === params.slug);
-    setService(matched || null);
+    const load = () => {
+      const matched = MockDB.getServices().find(s => s.slug === params.slug);
+      setService(matched || null);
+    };
+    load();
+    window.addEventListener('gg_db_update', load);
+    return () => window.removeEventListener('gg_db_update', load);
   }, [params.slug]);
 
   const handleShare = async () => {
@@ -1369,7 +1381,10 @@ export const PackagesView: React.FC<CustomerViewsProps> = ({ navigate }) => {
   const [packages, setPackages] = useState<Package[]>([]);
 
   useEffect(() => {
-    setPackages(MockDB.getPackages().filter(p => p.status === 'Active'));
+    const load = () => setPackages(MockDB.getPackages().filter(p => p.status === 'Active'));
+    load();
+    window.addEventListener('gg_db_update', load);
+    return () => window.removeEventListener('gg_db_update', load);
   }, []);
 
   return (
@@ -1409,14 +1424,19 @@ export const GalleryView: React.FC<CustomerViewsProps> = ({ navigate, settings }
   const [likesMap, setLikesMap] = useState<Record<string, { count: number; liked: boolean }>>({});
 
   useEffect(() => {
-    const items = MockDB.getGallery();
-    setGallery(items);
+    const load = () => {
+      const items = MockDB.getGallery();
+      setGallery(items);
 
-    const initialLikes: Record<string, { count: number; liked: boolean }> = {};
-    items.forEach(item => {
-      initialLikes[item.id] = { count: item.likes || Math.floor(Math.random() * 200 + 150), liked: false };
-    });
-    setLikesMap(initialLikes);
+      const initialLikes: Record<string, { count: number; liked: boolean }> = {};
+      items.forEach(item => {
+        initialLikes[item.id] = { count: item.likes || Math.floor(Math.random() * 200 + 150), liked: false };
+      });
+      setLikesMap(initialLikes);
+    };
+    load();
+    window.addEventListener('gg_db_update', load);
+    return () => window.removeEventListener('gg_db_update', load);
   }, []);
 
   const handleToggleLike = (e: React.MouseEvent, itemId: string) => {
@@ -1609,7 +1629,10 @@ export const ArtistsView: React.FC<CustomerViewsProps> = ({ navigate }) => {
   const [artists, setArtists] = useState<Artist[]>([]);
 
   useEffect(() => {
-    setArtists(MockDB.getArtists().filter(a => a.status === 'Active'));
+    const load = () => setArtists(MockDB.getArtists().filter(a => a.status === 'Active'));
+    load();
+    window.addEventListener('gg_db_update', load);
+    return () => window.removeEventListener('gg_db_update', load);
   }, []);
 
   return (
@@ -1645,8 +1668,13 @@ export const ArtistDetailsView: React.FC<CustomerViewsProps> = ({ params, naviga
   const [artist, setArtist] = useState<Artist | null>(null);
 
   useEffect(() => {
-    const matched = MockDB.getArtists().find(a => a.slug === params.slug);
-    setArtist(matched || null);
+    const load = () => {
+      const matched = MockDB.getArtists().find(a => a.slug === params.slug);
+      setArtist(matched || null);
+    };
+    load();
+    window.addEventListener('gg_db_update', load);
+    return () => window.removeEventListener('gg_db_update', load);
   }, [params.slug]);
 
   if (!artist) {
@@ -1718,7 +1746,7 @@ export const ArtistDetailsView: React.FC<CustomerViewsProps> = ({ params, naviga
                 Signature Services & Styling
               </h4>
               <div className="flex flex-wrap gap-2">
-                {artist.services.map((svc, idx) => (
+                {(artist.services || []).map((svc, idx) => (
                   <span
                     key={idx}
                     className="px-3 py-1 bg-[#FFF0F2] text-[#B85C72] text-xs font-semibold rounded-full border border-[#F5DDE1]"
@@ -1771,7 +1799,10 @@ export const ReviewsView: React.FC<CustomerViewsProps> = () => {
   const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
-    setReviews(MockDB.getReviews().filter(r => r.status === 'Approved'));
+    const load = () => setReviews(MockDB.getReviews().filter(r => r.status === 'Approved'));
+    load();
+    window.addEventListener('gg_db_update', load);
+    return () => window.removeEventListener('gg_db_update', load);
   }, []);
 
   const handleReviewSubmit = (e: React.FormEvent) => {

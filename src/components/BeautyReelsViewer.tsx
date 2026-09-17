@@ -758,7 +758,7 @@ export const BeautyReelsViewer: React.FC<BeautyReelsViewerProps> = ({
           {/* Hashtags */}
           {currentReel.tags && (
             <div className="flex flex-wrap gap-1.5 pt-0.5">
-              {currentReel.tags.map((t, idx) => (
+              {(currentReel.tags || []).map((t, idx) => (
                 <span key={idx} className="text-[10px] text-[#FAD2E1] font-sans font-medium">
                   {t}
                 </span>
